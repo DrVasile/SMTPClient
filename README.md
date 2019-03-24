@@ -55,7 +55,30 @@ By default, the SMTP protocol works on three ports:
 
 ## Implementation :
 
-To implement the app I've used
+The client app is composed by the mai object __*User*__ in which we store the email and password, and 3 functionalities. Two of them are for sending and email and the other for reading one. 
+
+For sending the emails I've used 2 methods which require authentication which are TLS and SSL. In each of them I use the instance of the user to create an email and to send it to the email __*toEmail*__. 
+
+The difference between the 2 methods appears at the properties set to each one : 
+
+**TLS : **
+
+~~~
+props.put("mail.smtp.host", "smtp.gmail.com");  //SMTP Host
+props.put("mail.smtp.port", "587");             //TLS Port
+props.put("mail.smtp.auth", "true");            //Enable authentication
+props.put("mail.smtp.starttls.enable", "true"); //Enable STARTTLS
+~~~
+
+**SSL : **
+
+~~~
+props.put("mail.smtp.host", "smtp.gmail.com");                                //SMTP Host
+props.put("mail.smtp.socketFactory.port", "465");                             //SSL Port
+props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory"); //SSL Factory Class
+props.put("mail.smtp.auth", "true");                                          //Enabling SMTP Authentication
+props.put("mail.smtp.port", "465"); 
+~~~
 
 ## Screenshot
 
