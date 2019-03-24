@@ -134,3 +134,5 @@ for (int i = 0; i < mimeMultipart.getCount(); i++) {
 ## Screenshot
 
 ![](img/Capture1.PNG)
+
+![](img/Capture2.PNG)
