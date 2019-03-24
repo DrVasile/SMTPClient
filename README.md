@@ -61,7 +61,8 @@ For sending the emails I've used 2 methods which require authentication which ar
 
 The difference between the 2 methods appears at the properties set to each one : 
 
-**TLS : **
+### For TLS :
+
 
 ~~~
 props.put("mail.smtp.host", "smtp.gmail.com");  //SMTP Host
@@ -70,7 +71,8 @@ props.put("mail.smtp.auth", "true");            //Enable authentication
 props.put("mail.smtp.starttls.enable", "true"); //Enable STARTTLS
 ~~~
 
-**SSL : **
+### For SSL : 
+
 
 ~~~
 props.put("mail.smtp.host", "smtp.gmail.com");                                //SMTP Host
@@ -78,6 +80,55 @@ props.put("mail.smtp.socketFactory.port", "465");                             //
 props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory"); //SSL Factory Class
 props.put("mail.smtp.auth", "true");                                          //Enabling SMTP Authentication
 props.put("mail.smtp.port", "465"); 
+~~~
+
+After the properties are set and the authentication is done I use an utility from __*EmailUtil*__ class to send the email. The method is independent of the properties, just creates the message and sends it :
+
+~~~
+MimeMessage msg = new MimeMessage(session);
+//set message headers
+msg.addHeader("Content-type", "text/HTML; charset=UTF-8");
+msg.addHeader("format", "flowed");
+msg.addHeader("Content-Transfer-Encoding", "8bit");
+
+msg.setFrom(new InternetAddress("no_reply@example.com", "NoReply-JD"));
+msg.setReplyTo(InternetAddress.parse("no_reply@example.com", false));
+msg.setSubject(subject, "UTF-8");
+msg.setText(body, "UTF-8");
+msg.setSentDate(new Date());
+msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail, false));
+
+Transport.send(msg);
+~~~
+
+To read an email I use the following properties : 
+
+~~~
+props.put("mail.pop3.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+props.put("mail.pop3.socketFactory.port", "995");
+props.put("mail.pop3.port", "995");
+props.put("mail.pop3.host", "pop.gmail.com");
+props.put("mail.pop3.user", user.getEmail());
+props.put("mail.store.protocol", "pop3");
+Session session = Session.getInstance(props);
+~~~
+
+Then I connect to the host server with the credentials to get the inbox and from it the message. When I have the message I print it with the __*printMessage*__ method. To get the body of the message I'll have to check if it is plain text, in which case I just get the text, but if it is multipart text I'll have to decompose it. For it I used a function which traverses all the parts and appends them to the resulting string : 
+
+
+~~~
+for (int i = 0; i < mimeMultipart.getCount(); i++) {
+    BodyPart bodyPart = mimeMultipart.getBodyPart(i);
+    if (bodyPart.isMimeType("text/plain")) {
+        multipartBody.append(bodyPart.getContent());
+        break;
+    } else if (bodyPart.isMimeType("text/html")) {
+        String html = (String) bodyPart.getContent();
+        multipartBody.append(Jsoup.parse(html).text());
+    } else if (bodyPart.getContent() instanceof MimeMultipart){
+        multipartBody.append(getBodyFromMimeMultipart((MimeMultipart) bodyPart.getContent()));
+    }
+}
 ~~~
 
 ## Screenshot
