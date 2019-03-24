@@ -21,8 +21,8 @@ public class App {
         }
 
         User tempUser = new User(email, password);
-        //TLSEmail tlsEmail = new TLSEmail(tempUser);
-        //SSLEmail sslEmail = new SSLEmail(tempUser);
+        TLSEmail tlsEmail = new TLSEmail(tempUser);
+        SSLEmail sslEmail = new SSLEmail(tempUser);
         ReadEmail readEmail = new ReadEmail(tempUser);
     }
 }

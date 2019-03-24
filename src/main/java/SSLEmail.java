@@ -27,7 +27,6 @@ class SSLEmail {
         props.put("mail.smtp.port", "465");                                           //SMTP Port
 
         Authenticator auth = new Authenticator() {
-            //override the getPasswordAuthentication method
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(userInstance.getEmail(), user.getPassword());
             }
