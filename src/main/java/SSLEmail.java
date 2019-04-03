@@ -35,6 +35,6 @@ class SSLEmail {
         Session session = Session.getDefaultInstance(props, auth);
         System.out.println("Session created");
 
-        EmailUtil.sendEmail(session, toEmail,"SSLEmail Testing Subject", "SSLEmail Testing Body");
+        EmailUtil.sendImageEmail(session, toEmail,"SSLEmail Testing Subject", "SSLEmail Testing Body");
     }
 }

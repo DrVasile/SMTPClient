@@ -1,5 +1,3 @@
-import java.io.UnsupportedEncodingException;
-import java.util.Date;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
@@ -8,10 +6,11 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import java.util.Date;
 
 class EmailUtil {
 
-    static void sendEmail(Session session, String toEmail, String subject, String body) {
+    private static MimeMessage prepareMessage(Session session, String toEmail, String subject, String body) {
         try {
             MimeMessage msg = new MimeMessage(session);
             //set message headers
@@ -26,6 +25,17 @@ class EmailUtil {
             msg.setSentDate(new Date());
             msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail, false));
 
+            return msg;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    static void sendEmail(Session session, String toEmail, String subject, String body) {
+        try {
+            MimeMessage msg = prepareMessage(session, toEmail, subject, body);
             System.out.println("Message is ready");
             Transport.send(msg);
 
@@ -36,22 +46,9 @@ class EmailUtil {
         }
     }
 
-    /**static void sendAttachmentEmail(Session session, String toEmail, String subject, String body){
+    static void sendAttachmentEmail(Session session, String toEmail, String subject, String body){
         try{
-            MimeMessage msg = new MimeMessage(session);
-            msg.addHeader("Content-type", "text/HTML; charset=UTF-8");
-            msg.addHeader("format", "flowed");
-            msg.addHeader("Content-Transfer-Encoding", "8bit");
-
-            msg.setFrom(new InternetAddress("no_reply@example.com", "NoReply-JD"));
-
-            msg.setReplyTo(InternetAddress.parse("no_reply@example.com", false));
-
-            msg.setSubject(subject, "UTF-8");
-
-            msg.setSentDate(new Date());
-
-            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail, false));
+            MimeMessage msg = prepareMessage(session, toEmail, subject, body);
 
             // Create the message body part
             BodyPart messageBodyPart = new MimeBodyPart();
@@ -74,6 +71,7 @@ class EmailUtil {
             multipart.addBodyPart(messageBodyPart);
 
             // Send the complete message parts
+            assert msg != null;
             msg.setContent(multipart);
 
             // Send message
@@ -81,27 +79,12 @@ class EmailUtil {
             System.out.println("EMail Sent Successfully with attachment!!");
         }catch (MessagingException e) {
             e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
         }
     }
 
-    public static void sendImageEmail(Session session, String toEmail, String subject, String body){
+    static void sendImageEmail(Session session, String toEmail, String subject, String body){
         try{
-            MimeMessage msg = new MimeMessage(session);
-            msg.addHeader("Content-type", "text/HTML; charset=UTF-8");
-            msg.addHeader("format", "flowed");
-            msg.addHeader("Content-Transfer-Encoding", "8bit");
-
-            msg.setFrom(new InternetAddress("no_reply@example.com", "NoReply-JD"));
-
-            msg.setReplyTo(InternetAddress.parse("no_reply@example.com", false));
-
-            msg.setSubject(subject, "UTF-8");
-
-            msg.setSentDate(new Date());
-
-            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail, false));
+            MimeMessage msg = prepareMessage(session, toEmail, subject, body);
 
             // Create the message body part
             BodyPart messageBodyPart = new MimeBodyPart();
@@ -116,7 +99,7 @@ class EmailUtil {
 
             // Second part is image attachment
             messageBodyPart = new MimeBodyPart();
-            String filename = "image.png";
+            String filename = "math.jpg";
             DataSource source = new FileDataSource(filename);
             messageBodyPart.setDataHandler(new DataHandler(source));
             messageBodyPart.setFileName(filename);
@@ -138,8 +121,6 @@ class EmailUtil {
             System.out.println("EMail Sent Successfully with image!!");
         }catch (MessagingException e) {
             e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
         }
-    }*/
+    }
 }

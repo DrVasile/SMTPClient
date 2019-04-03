@@ -32,6 +32,6 @@ class TLSEmail {
         };
 
         Session session = Session.getInstance(props, auth);
-        EmailUtil.sendEmail(session, toEmail,"TLSEmail Testing Subject", "TLSEmail Testing Body");
+        EmailUtil.sendAttachmentEmail(session, toEmail,"TLSEmail Testing Subject", "TLSEmail Testing Body");
     }
 }
